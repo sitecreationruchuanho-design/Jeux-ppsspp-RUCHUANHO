@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUCHUANHO GAMING ZONE</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#000;
+    color:#fff;
+}
+
+header{
+    text-align:center;
+    padding:30px;
+    border-bottom:3px solid #00ff00;
+    box-shadow:0 0 30px #00ff00;
+}
+
+header h1{
+    font-size:55px;
+    color:#00ff00;
+    text-shadow:0 0 25px #00ff00;
+}
+
+header p{
+    font-size:22px;
+    margin-top:10px;
+    color:#ccc;
+}
+
+.search-box{
+    width:90%;
+    max-width:900px;
+    margin:30px auto;
+}
+
+.search-box input{
+    width:100%;
+    padding:18px;
+    font-size:20px;
+    border:none;
+    border-radius:15px;
+    background:#111;
+    color:#00ff00;
+    border:2px solid #00ff00;
+    outline:none;
+}
+
+.games{
+    width:95%;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+    padding-bottom:50px;
+}
+
+.game{
+    background:#111;
+    border:2px solid #00ff00;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 25px rgba(0,255,0,0.4);
+    transition:0.3s;
+}
+
+.game:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 35px #00ff00;
+}
+
+.game img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+}
+
+.game-content{
+    padding:20px;
+}
+
+.game h3{
+    color:#00ff00;
+    font-size:24px;
+    margin-bottom:15px;
+}
+
+.price{
+    color:gold;
+    font-size:32px;
+    margin-bottom:20px;
+}
+
+.buy-btn{
+    width:100%;
+    padding:16px;
+    font-size:22px;
+    font-weight:bold;
+    background:#00ff00;
+    color:#000;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.buy-btn:hover{
+    background:#00cc00;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.95);
+    z-index:999;
+}
+
+.modal-content{
+    width:90%;
+    max-width:500px;
+    background:#111;
+    margin:50px auto;
+    padding:30px;
+    border-radius:20px;
+    border:2px solid #00ff00;
+    box-shadow:0 0 30px #00ff00;
+}
+
+.modal h2{
+    text-align:center;
+    color:#00ff00;
+    margin-bottom:20px;
+}
+
+.numero{
+    text-align:center;
+    font-size:30px;
+    color:gold;
+    margin:20px 0;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+}
+
+button.confirm{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    background:#00ff00;
+    color:#000;
+    border:none;
+    border-radius:10px;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.success{
+    display:none;
+    text-align:center;
+    padding:20px;
+}
+
+.success h2{
+    color:#00ff00;
+    margin-bottom:15px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>RUCHUANHO GAMING ZONE</h1>
+    <p>Boutique Jeux PSP Premium</p>
+</header>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="🔍 Rechercher un jeu..." onkeyup="searchGames()">
+</div>
+
+<div class="games" id="games"></div>
+
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <div id="paymentForm">
+            <h2 id="selectedGame">Paiement</h2>
+
+            <p style="text-align:center;">Envoyez sur ce numéro :</p>
+            <div class="numero">034 12 345 67</div>
+
+            <input type="text" id="senderNumber" placeholder="Numéro expéditeur">
+            <input type="text" id="paymentReference" placeholder="Référence paiement">
+
+            <button class="confirm" onclick="confirmPayment()">
+                Confirmer
+            </button>
+        </div>
+
+        <div class="success" id="successBox">
+            <h2>✅ Achat Réussi</h2>
+            <p>Envoyez un message sur Facebook :</p>
+            <h3 style="color:gold;">RUCHUANHO</h3>
+        </div>
+    </div>
+</div>
+
+<script>
+const games = [
+{name:"Assassin Creed Bloodlines",price:"1000 Ar"},
+{name:"Beowulf The Game",price:"500 Ar"},
+{name:"3rd Birthday",price:"1000 Ar"},
+{name:"Bomberman",price:"500 Ar"},
+{name:"Burnout Legends",price:"1000 Ar"},
+{name:"CARS 2 PSP",price:"500 Ar"},
+{name:"COD Roads To Victory",price:"1000 Ar"},
+{name:"Dissidia 012 Final Fantasy",price:"1000 Ar"},
+{name:"Dead to Rights Reckoning",price:"1000 Ar"},
+{name:"Death Jr",price:"500 Ar"},
+{name:"Downhill Domination",price:"1000 Ar"},
+{name:"Ducati Challenge",price:"500 Ar"},
+{name:"FIFA STREET 2025",price:"1500 Ar"},
+{name:"Fight Night Round 3",price:"1000 Ar"},
+{name:"Godfather Mob Wars",price:"1000 Ar"},
+{name:"Grand Theft Auto LCS",price:"1000 Ar"},
+{name:"Hellboy The Science of Evil",price:"700 Ar"},
+{name:"Hysteria Project 2",price:"500 Ar"},
+{name:"Kamen Rider Climax Heroes Fourze",price:"600 Ar"},
+{name:"King Kong PSP",price:"800 Ar"},
+{name:"LEGO Star Wars III",price:"900 Ar"},
+{name:"Manhunt 2",price:"800 Ar"},
+{name:"Marvel Nemesis",price:"1000 Ar"},
+{name:"Miami Vice",price:"1000 Ar"},
+{name:"MotoGP",price:"700 Ar"},
+{name:"MTX MototraX",price:"800 Ar"},
+{name:"N.O.V.A",price:"1000 Ar"},
+{name:"Naruto Kizuna Drive",price:"1000 Ar"},
+{name:"NBA",price:"900 Ar"},
+{name:"Need For Speed Carbon",price:"1000 Ar"},
+{name:"NFS Most Wanted",price:"1000 Ar"},
+{name:"One Piece Romance Dawn",price:"800 Ar"},
+{name:"Phineas and Ferb",price:"500 Ar"},
+{name:"Pirates Of The Caribbean",price:"1000 Ar"},
+{name:"Pocket Racers",price:"800 Ar"},
+{name:"Prince Of Persia Forgotten Sands",price:"1000 Ar"},
+{name:"Ratchet and Clank",price:"700 Ar"},
+{name:"Ratatouille",price:"1000 Ar"},
+{name:"God Of War Chains Of Olympus",price:"1000 Ar"},
+{name:"WWE 2K19",price:"1000 Ar"},
+{name:"Undead Knights",price:"700 Ar"},
+{name:"TEKKEN 6",price:"1500 Ar"},
+{name:"StreetKix Freestyle",price:"1000 Ar"},
+{name:"Spiderman 2",price:"800 Ar"},
+{name:"Spider-Man 3",price:"1000 Ar"},
+{name:"Sonic Rivals",price:"600 Ar"}
+];
+
+let currentGame = "";
+let currentPrice = "";
+
+function getGameImage(name){
+    return `https://images.igdb.com/igdb/image/upload/t_cover_big/co1rsu.jpg`;
+}
+
+function displayGames(list){
+    const container=document.getElementById("games");
+    container.innerHTML="";
+
+    list.forEach(game=>{
+        container.innerHTML+=`
+        <div class="game">
+            <img src="https://source.unsplash.com/600x400/?${encodeURIComponent(game.name)},psp,game" alt="${game.name}">
+            <div class="game-content">
+                <h3>${game.name}</h3>
+                <div class="price">${game.price}</div>
+                <button class="buy-btn" onclick="buyGame('${game.name}','${game.price}')">
+                    Acheter
+                </button>
+            </div>
+        </div>`;
+    });
+}
+
+function searchGames(){
+    const value=document.getElementById("searchInput").value.toLowerCase();
+
+    const filtered=games.filter(game=>
+        game.name.toLowerCase().includes(value)
+    );
+
+    displayGames(filtered);
+}
+
+function buyGame(name,price){
+    currentGame=name;
+    currentPrice=price;
+    document.getElementById("selectedGame").innerText=name;
+    document.getElementById("paymentModal").style.display="block";
+}
+
+function confirmPayment(){
+    const numero=document.getElementById("senderNumber").value;
+    const reference=document.getElementById("paymentReference").value;
+
+    if(numero==="" || reference===""){
+        alert("Remplissez tous les champs.");
+        return;
+    }
+
+    console.log({
+        jeu:currentGame,
+        prix:currentPrice,
+        numero:numero,
+        reference:reference
+    });
+
+    document.getElementById("paymentForm").style.display="none";
+    document.getElementById("successBox").style.display="block";
+}
+
+window.onclick=function(event){
+    const modal=document.getElementById("paymentModal");
+    if(event.target==modal){
+        modal.style.display="none";
+        document.getElementById("paymentForm").style.display="block";
+        document.getElementById("successBox").style.display="none";
+    }
+}
+
+displayGames(games);
+</script>
+
+</body>
+</html>
